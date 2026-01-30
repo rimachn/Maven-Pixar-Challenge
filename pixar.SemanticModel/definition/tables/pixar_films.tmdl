@@ -1,0 +1,126 @@
+table pixar_films
+	lineageTag: 516db404-1b90-4296-9cd0-cedf5795deae
+
+	column number
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: dd64f74e-e991-4125-acde-5c9408fa0801
+		summarizeBy: none
+		sourceColumn: number
+
+		annotation SummarizationSetBy = Automatic
+
+	column film
+		dataType: string
+		lineageTag: 3bdd26ed-8eba-4fc6-932c-71f24b4b116c
+		summarizeBy: none
+		sourceColumn: film
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"pixar_films","TableItemName":"film (groups)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
+	column release_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e07e703c-3420-41ef-ac4a-21cde7a05c70
+		summarizeBy: none
+		sourceColumn: release_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column run_time
+		dataType: int64
+		formatString: 0
+		lineageTag: 018676e4-611b-4610-99b4-6b0605767a67
+		summarizeBy: none
+		sourceColumn: run_time
+
+		annotation SummarizationSetBy = User
+
+	column film_rating
+		dataType: string
+		lineageTag: 4c5a9495-eee4-465a-a01b-7a4fefa84282
+		summarizeBy: none
+		sourceColumn: film_rating
+
+		annotation SummarizationSetBy = Automatic
+
+	column plot
+		dataType: string
+		lineageTag: 96b12347-ea71-4232-aa83-7716ff40a7c2
+		summarizeBy: none
+		sourceColumn: plot
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'film (groups)' =
+			SWITCH(
+				TRUE,
+				ISBLANK('pixar_films'[film]),
+				"(Blank)",
+				'pixar_films'[film] IN {"Cars",
+					"Cars 2",
+					"Cars 3"},
+				"Cars",
+				'pixar_films'[film] IN {"Finding Dory",
+					"Finding Nemo"},
+				"Finding Dory & Finding Nemo",
+				'pixar_films'[film] IN {"Incredibles 2",
+					"The Incredibles"},
+				"Incredibles ",
+				'pixar_films'[film] IN {"Inside Out",
+					"Inside Out 2"},
+				"Inside Out",
+				'pixar_films'[film] IN {"Monsters University",
+					"Monsters, Inc."},
+				"Monsters",
+				'pixar_films'[film] IN {"Toy Story",
+					"Toy Story 2",
+					"Toy Story 3",
+					"Toy Story 4"},
+				"Toy story",
+				"Other"
+			)
+		lineageTag: f1e5cb2e-0fa8-4e37-9cf9-00e74fb3142f
+		summarizeBy: none
+
+		extendedProperty GroupingMetadata =
+				{
+				  "version": 0,
+				  "groupedColumns": [
+				    {
+				      "Column": {
+				        "Expression": {
+				          "SourceRef": {
+				            "Entity": "pixar_films"
+				          }
+				        },
+				        "Property": "film"
+				      }
+				    }
+				  ]
+				}
+
+		annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"p","Entity":"pixar_films"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"GroupItems":[{"DisplayName":"(Blank)","BlankDefaultPlaceholder":true},{"DisplayName":"Cars","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"Values":[[{"Literal":{"Value":"'Cars'"}}],[{"Literal":{"Value":"'Cars 2'"}}],[{"Literal":{"Value":"'Cars 3'"}}]]}}},{"DisplayName":"Finding Dory & Finding Nemo","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"Values":[[{"Literal":{"Value":"'Finding Dory'"}}],[{"Literal":{"Value":"'Finding Nemo'"}}]]}}},{"DisplayName":"Incredibles ","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"Values":[[{"Literal":{"Value":"'Incredibles 2'"}}],[{"Literal":{"Value":"'The Incredibles'"}}]]}}},{"DisplayName":"Inside Out","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"Values":[[{"Literal":{"Value":"'Inside Out'"}}],[{"Literal":{"Value":"'Inside Out 2'"}}]]}}},{"DisplayName":"Monsters","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"Values":[[{"Literal":{"Value":"'Monsters University'"}}],[{"Literal":{"Value":"'Monsters, Inc.'"}}]]}}},{"DisplayName":"Toy story","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"p"}},"Property":"film"}}],"Values":[[{"Literal":{"Value":"'Toy Story'"}}],[{"Literal":{"Value":"'Toy Story 2'"}}],[{"Literal":{"Value":"'Toy Story 3'"}}],[{"Literal":{"Value":"'Toy Story 4'"}}]]}}},{"DisplayName":"Other"}]}
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pixar_films = m
+		mode: import
+		queryGroup: 'Dimsion tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\pixar_films.csv"),[Delimiter=",", Columns=6, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"number", Int64.Type}, {"film", type text}, {"release_date", type date}, {"run_time", Int64.Type}, {"film_rating", type text}, {"plot", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

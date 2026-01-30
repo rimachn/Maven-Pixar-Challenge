@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "ac6985e014ccdae1a4a5",
+  "position": {
+    "x": 890.03890101345269,
+    "y": 155.04716199526663,
+    "z": 4000,
+    "height": 519.30682976554544,
+    "width": 382.30377166156984,
+    "tabOrder": 3000
+  },
+  "visualGroup": {
+    "displayName": "Overview & Rating",
+    "groupMode": "ScaleMode"
+  }
+}

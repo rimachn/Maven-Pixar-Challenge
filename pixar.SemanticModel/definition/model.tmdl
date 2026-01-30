@@ -1,0 +1,46 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup 'Dimsion tables'
+
+	annotation PBI_QueryGroupOrder = 1
+
+queryGroup 'Fact tables'
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup 'Tables used to create fact table'
+
+	annotation PBI_QueryGroupOrder = 2
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["pixar_films","box_office","public_response","Box_Office_data","box_office (2)","public_response_data","genres_category","genres_type","genres_data","academy_awards","academy_award_status","academy_data","role","people_details","pixar_people","Calendar","Measures Table"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table pixar_films
+ref table box_office
+ref table Box_Office_data
+ref table public_response
+ref table public_response_data
+ref table genres_category
+ref table genres_type
+ref table genres_data
+ref table academy_awards
+ref table academy_award_status
+ref table academy_data
+ref table role
+ref table people_details
+ref table pixar_people
+ref table Calendar
+ref table 'Measures Table'
+ref table 'Rating Slicer'
+
+ref cultureInfo en-US
+

@@ -1,0 +1,61 @@
+table pixar_people
+	lineageTag: 2b839340-8755-4af6-aede-907fca1c4dd1
+
+	column film_number
+		dataType: int64
+		formatString: 0
+		lineageTag: fb0b05f4-1594-4d6f-ac11-5fa5d41f8c17
+		summarizeBy: none
+		sourceColumn: film_number
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column role_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f4cbb48b-8da0-49a8-ae6c-39ac2b54a478
+		summarizeBy: none
+		sourceColumn: role_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column People_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 9fbe82a3-f733-4601-9680-22fef6db6c8c
+		summarizeBy: none
+		sourceColumn: People_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pixar_people = m
+		mode: import
+		queryGroup: 'Fact tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\pixar_people.csv"),[Delimiter=",", Columns=3, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"role_type", type text}, {"name", type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"film"}, pixar_films, {"film"}, "pixar_films", JoinKind.LeftOuter),
+				    #"Expanded pixar_films" = Table.ExpandTableColumn(#"Merged Queries", "pixar_films", {"number"}, {"number"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Expanded pixar_films",{{"number", "film_number"}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"film_number", "film", "role_type", "name"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Reordered Columns",{"film"}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Removed Columns", {"role_type"}, role, {"role_type"}, "role", JoinKind.LeftOuter),
+				    #"Expanded role" = Table.ExpandTableColumn(#"Merged Queries1", "role", {"role_id"}, {"role_id"}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Expanded role",{"film_number", "role_id", "role_type", "name"}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Reordered Columns1",{"role_type"}),
+				    #"Merged Queries2" = Table.NestedJoin(#"Removed Columns1", {"name"}, people_details, {"People_name"}, "people_details", JoinKind.LeftOuter),
+				    #"Expanded people_details" = Table.ExpandTableColumn(#"Merged Queries2", "people_details", {"People_id"}, {"People_id"}),
+				    #"Reordered Columns2" = Table.ReorderColumns(#"Expanded people_details",{"film_number", "role_id", "People_id", "name"}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Reordered Columns2",{"name"})
+				in
+				    #"Removed Columns2"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

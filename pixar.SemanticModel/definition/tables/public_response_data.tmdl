@@ -1,0 +1,90 @@
+table public_response_data
+	lineageTag: a69f51bb-8410-47aa-8ead-e964e40a21c6
+
+	column film_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 86b3ef18-1ec6-470e-a076-e46adcc98675
+		summarizeBy: none
+		sourceColumn: film_number
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Critic_score_review_ID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 031fd62a-8e24-4cff-9410-ab7ab0e6fbf6
+		summarizeBy: none
+		sourceColumn: Critic_score_review_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Critic_score_review_Value
+		dataType: double
+		lineageTag: f7a5061f-57ac-45b4-9672-bd7d0974d28d
+		summarizeBy: sum
+		sourceColumn: Critic_score_review_Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cinema_score_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 76d14e09-23fd-49f0-8293-dd9ca84629e5
+		summarizeBy: sum
+		sourceColumn: cinema_score_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column cinema_score_value
+		dataType: string
+		lineageTag: 56a4bb9e-0ad6-40a1-b9cc-d4860f780147
+		summarizeBy: none
+		sourceColumn: cinema_score_value
+
+		annotation SummarizationSetBy = Automatic
+
+	partition public_response_data = m
+		mode: import
+		queryGroup: 'Fact tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\public_response.csv"),[Delimiter=",", Columns=8, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"rotten_tomatoes_score", Int64.Type}, {"rotten_tomatoes_counts", Int64.Type}, {"metacritic_score", Int64.Type}, {"metacritic_counts", Int64.Type}, {"cinema_score", type text}, {"imdb_score", type number}, {"imdb_counts", Int64.Type}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"film"}, pixar_films, {"film"}, "pixar_films", JoinKind.LeftOuter),
+				    #"Expanded pixar_films" = Table.ExpandTableColumn(#"Merged Queries", "pixar_films", {"number"}, {"number"}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Expanded pixar_films",{"number", "film", "rotten_tomatoes_score", "rotten_tomatoes_counts", "metacritic_score", "metacritic_counts", "cinema_score", "imdb_score", "imdb_counts"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"number", "film_number"}}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Renamed Columns",{"film_number", "film", "cinema_score", "rotten_tomatoes_score", "rotten_tomatoes_counts", "metacritic_score", "metacritic_counts", "imdb_score", "imdb_counts"}),
+				    #"Unpivoted Other Columns" = Table.UnpivotOtherColumns(#"Reordered Columns1", {"film_number", "film", "cinema_score"}, "Attribute", "Value"),
+				    #"Merged Queries1" = Table.NestedJoin(#"Unpivoted Other Columns", {"Attribute"}, public_response, {"Critic_score_review"}, "public_response", JoinKind.LeftOuter),
+				    #"Expanded public_response" = Table.ExpandTableColumn(#"Merged Queries1", "public_response", {"Critic_score_review_ID"}, {"Critic_score_review_ID"}),
+				    #"Reordered Columns2" = Table.ReorderColumns(#"Expanded public_response",{"film_number", "film", "cinema_score", "Critic_score_review_ID", "Attribute", "Value"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Reordered Columns2",{"Attribute"}),
+				    #"Unpivoted Only Selected Columns" = Table.Unpivot(#"Removed Columns", {"cinema_score"}, "Attribute", "Value.1"),
+				    #"Merged Queries2" = Table.NestedJoin(#"Unpivoted Only Selected Columns", {"Attribute"}, public_response, {"Critic_score_review"}, "public_response", JoinKind.LeftOuter),
+				    #"Expanded public_response1" = Table.ExpandTableColumn(#"Merged Queries2", "public_response", {"Critic_score_review_ID"}, {"Critic_score_review_ID.1"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Expanded public_response1",{{"Critic_score_review_ID.1", "Critic_score_review_ID_cinema_score"}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns1",{"Attribute"}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Removed Columns1",{{"Critic_score_review_ID_cinema_score", "cinema_score_id"}}),
+				    #"Reordered Columns3" = Table.ReorderColumns(#"Renamed Columns2",{"film_number", "film", "Critic_score_review_ID", "Value", "cinema_score_id", "Value.1"}),
+				    #"Renamed Columns3" = Table.RenameColumns(#"Reordered Columns3",{{"Value.1", "cinema_score_value"}, {"Value", "Critic_score_review_Value"}}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Renamed Columns3",{"film"})
+				in
+				    #"Removed Columns2"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

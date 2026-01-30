@@ -1,0 +1,67 @@
+table genres_type
+	lineageTag: b7919de9-b1b4-4102-a8f1-ab892fcd5a14
+
+	column genre_type_id
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: ee0bf150-42d1-4dae-bb72-8c26a023196e
+		summarizeBy: none
+		sourceColumn: genre_type_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category_Id
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ee06947-2d62-43df-abd9-c728722bc73b
+		summarizeBy: none
+		sourceColumn: Category_Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column genre_type
+		dataType: string
+		lineageTag: db90c5cc-4496-4fe1-bced-c3b945af5c29
+		summarizeBy: none
+		sourceColumn: genre_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Category Name' =
+			
+			RELATED(genres_category[category])
+		lineageTag: 03f77805-a2b9-4ca4-bdf1-e5719b6e6e9c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition genres_type = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\genres.csv"),[Delimiter=",", Columns=3, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"category", type text}, {"value", type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"film"}, pixar_films, {"film"}, "pixar_films", JoinKind.LeftOuter),
+				    #"Expanded pixar_films" = Table.ExpandTableColumn(#"Merged Queries", "pixar_films", {"number"}, {"number"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Expanded pixar_films",{{"number", "film_number"}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"film_number", "film", "category", "value"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Reordered Columns",{"film"}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Removed Columns", {"category"}, genres_category, {"category"}, "genres_category", JoinKind.LeftOuter),
+				    #"Expanded genres_category" = Table.ExpandTableColumn(#"Merged Queries1", "genres_category", {"Category_Id"}, {"Category_Id"}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Expanded genres_category",{"film_number", "Category_Id", "category", "value"}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Reordered Columns1",{"category", "film_number"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns1",{{"value", "type"}}),
+				    #"Removed Duplicates" = Table.Distinct(#"Renamed Columns1"),
+				    #"Added Index" = Table.AddIndexColumn(#"Removed Duplicates", "Index", 1, 1, Int64.Type),
+				    #"Reordered Columns2" = Table.ReorderColumns(#"Added Index",{"Index", "Category_Id", "type"}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Reordered Columns2",{{"type", "genre_type"}, {"Index", "genre_type_id"}})
+				in
+				    #"Renamed Columns2"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

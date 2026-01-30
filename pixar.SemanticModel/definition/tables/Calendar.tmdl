@@ -1,0 +1,131 @@
+table Calendar
+	lineageTag: 713f3b32-c52f-4795-a0a0-2e0e2227881a
+
+	column release_date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: e5a1bbf4-b91a-4c93-aec8-6b8d29672284
+		summarizeBy: none
+		sourceColumn: release_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Day
+		dataType: int64
+		formatString: 0
+		lineageTag: 1ae5bdfc-140a-4f05-b8b3-3f7cf7a40771
+		summarizeBy: none
+		sourceColumn: Day
+
+		annotation SummarizationSetBy = User
+
+	column 'Day Name'
+		dataType: string
+		lineageTag: 6de23466-6af5-4dfd-901a-23e2fce8eb58
+		summarizeBy: none
+		sourceColumn: Day Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: c992be00-6a95-425e-bfd6-0bec4e4be8c1
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = User
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 30a1145f-c084-4e82-b6c8-fcfbf7e73ebb
+		summarizeBy: none
+		sourceColumn: Month Name
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week of Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: e6a01c6a-2da7-4964-b019-0d74d1f76866
+		summarizeBy: none
+		sourceColumn: Week of Month
+
+		annotation SummarizationSetBy = User
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: f8a4b8d1-59dc-4e80-93b8-1e805fb3f79f
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = User
+
+		annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"Calendar","TableItemName":"Year (bins)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
+	column 'Year (bins)' =
+			IF(
+				ISBLANK('Calendar'[Year]),
+				BLANK(),
+				INT('Calendar'[Year] / 10) * 10
+			)
+		formatString: 0
+		lineageTag: 82630eb6-bc86-4b00-bc2d-5279f0527ad7
+		summarizeBy: none
+
+		extendedProperty GroupingMetadata =
+				{
+				  "version": 0,
+				  "groupedColumns": [
+				    {
+				      "Column": {
+				        "Expression": {
+				          "SourceRef": {
+				            "Entity": "Calendar"
+				          }
+				        },
+				        "Property": "Year"
+				      }
+				    }
+				  ],
+				  "binningMetadata": {
+				    "binSize": {
+				      "value": 10.0,
+				      "unit": 0
+				    }
+				  }
+				}
+
+		annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"c","Entity":"Calendar"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"c"}},"Property":"Year"}}],"BinItem":{"Expression":{"Floor":{"Expression":{"Column":{"Expression":{"SourceRef":{"Source":"c"}},"Property":"Year"}},"Size":10.0}}}}
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendar = m
+		mode: import
+		queryGroup: 'Dimsion tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\pixar_films.csv"),[Delimiter=",", Columns=6, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"number", Int64.Type}, {"film", type text}, {"release_date", type date}, {"run_time", Int64.Type}, {"film_rating", type text}, {"plot", type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"release_date"}),
+				    #"Inserted Day" = Table.AddColumn(#"Removed Other Columns", "Day", each Date.Day([release_date]), Int64.Type),
+				    #"Inserted Day Name" = Table.AddColumn(#"Inserted Day", "Day Name", each Date.DayOfWeekName([release_date]), type text),
+				    #"Inserted Month" = Table.AddColumn(#"Inserted Day Name", "Month", each Date.Month([release_date]), Int64.Type),
+				    #"Inserted Month Name" = Table.AddColumn(#"Inserted Month", "Month Name", each Date.MonthName([release_date]), type text),
+				    #"Inserted Week of Month" = Table.AddColumn(#"Inserted Month Name", "Week of Month", each Date.WeekOfMonth([release_date]), Int64.Type),
+				    #"Inserted Year" = Table.AddColumn(#"Inserted Week of Month", "Year", each Date.Year([release_date]), Int64.Type)
+				in
+				    #"Inserted Year"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

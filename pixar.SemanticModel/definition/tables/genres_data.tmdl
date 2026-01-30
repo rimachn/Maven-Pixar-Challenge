@@ -1,0 +1,51 @@
+table genres_data
+	lineageTag: 61935b92-540c-46db-a025-2673244dbc5d
+
+	column film_number
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 909ba01f-8cbc-4226-bf3f-d981d8815b28
+		summarizeBy: none
+		sourceColumn: film_number
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column genre_type_id
+		dataType: int64
+		formatString: 0
+		lineageTag: da370391-ca48-4985-996a-69df37107342
+		summarizeBy: none
+		sourceColumn: genre_type_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition genres_data = m
+		mode: import
+		queryGroup: 'Fact tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\genres.csv"),[Delimiter=",", Columns=3, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"category", type text}, {"value", type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"film"}, pixar_films, {"film"}, "pixar_films", JoinKind.LeftOuter),
+				    #"Expanded pixar_films" = Table.ExpandTableColumn(#"Merged Queries", "pixar_films", {"number"}, {"number"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Expanded pixar_films",{{"number", "film_number"}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"film_number", "film", "category", "value"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Reordered Columns",{"film"}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Removed Columns", {"value"}, genres_type, {"genre_type"}, "genres_type", JoinKind.LeftOuter),
+				    #"Expanded genres_type" = Table.ExpandTableColumn(#"Merged Queries1", "genres_type", {"genre_type_id"}, {"genre_type_id"}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Expanded genres_type",{"film_number", "genre_type_id", "category", "value"}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Reordered Columns1",{"category", "value"})
+				in
+				    #"Removed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

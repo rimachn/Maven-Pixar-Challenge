@@ -1,0 +1,33 @@
+table 'Rating Slicer'
+	lineageTag: d7b21d29-7405-4e8a-a719-9e14704c91a2
+
+	column Value1
+		lineageTag: f90cccf4-f88d-4da0-a69a-b85f5e92d552
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value1]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value2
+		formatString: 0
+		lineageTag: 73b2a0fb-d9ba-475c-aa6a-8c824f660506
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value2]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Rating Slicer' = calculated
+		mode: import
+		source =
+				
+				{
+				    ("IMDB",0),
+				    ("Rotten Tomatoes",1),
+				    ("MetaCritic",2),
+				    ("Cinema",2)
+				}
+
+	annotation PBI_Id = dfb83d51f892446ab7f0cd6c5ad66724
+

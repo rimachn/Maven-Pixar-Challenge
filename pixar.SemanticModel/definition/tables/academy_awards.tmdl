@@ -1,0 +1,42 @@
+table academy_awards
+	lineageTag: 1fb97e91-dd51-4648-a780-906cb82cd683
+
+	column award_Id
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: 900c44bb-3868-43c0-8ed1-b25b68c0a551
+		summarizeBy: none
+		sourceColumn: award_Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column award_type
+		dataType: string
+		lineageTag: 8b9e1e3e-eeff-4595-b713-89c5729d5a81
+		summarizeBy: none
+		sourceColumn: award_type
+
+		annotation SummarizationSetBy = Automatic
+
+	partition academy_awards = m
+		mode: import
+		queryGroup: 'Dimsion tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\academy.csv"),[Delimiter=",", Columns=3, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"award_type", type text}, {"status", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type1",{"film", "status"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Columns"),
+				    #"Added Index" = Table.AddIndexColumn(#"Removed Duplicates", "Index", 1, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "award_type"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Index", "award_Id"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

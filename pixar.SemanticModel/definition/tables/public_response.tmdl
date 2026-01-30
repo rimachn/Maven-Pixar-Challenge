@@ -1,0 +1,44 @@
+table public_response
+	lineageTag: 3f321198-701f-4ee1-9595-8726e1ab2b4c
+
+	column Critic_score_review_ID
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: d4b557bb-0f1c-4d9b-819c-d59fd5a69a74
+		summarizeBy: none
+		sourceColumn: Critic_score_review_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Critic_score_review
+		dataType: string
+		lineageTag: d3fb3ad4-7a6e-46f5-92d9-8eb2d9d8aa0c
+		summarizeBy: none
+		sourceColumn: Critic_score_review
+
+		annotation SummarizationSetBy = Automatic
+
+	partition public_response = m
+		mode: import
+		queryGroup: 'Dimsion tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\public_response.csv"),[Delimiter=",", Columns=8, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"rotten_tomatoes_score", Int64.Type}, {"rotten_tomatoes_counts", Int64.Type}, {"metacritic_score", Int64.Type}, {"metacritic_counts", Int64.Type}, {"cinema_score", type text}, {"imdb_score", type number}, {"imdb_counts", Int64.Type}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"film"}),
+				    #"Unpivoted Columns" = Table.UnpivotOtherColumns(#"Removed Columns", {}, "Attribute", "Value"),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Unpivoted Columns",{"Value"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns1",{{"Attribute", "Critic_score_review"}}),
+				    #"Removed Duplicates" = Table.Distinct(#"Renamed Columns"),
+				    #"Added Index" = Table.AddIndexColumn(#"Removed Duplicates", "Index", 1, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "Critic_score_review"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Reordered Columns",{{"Index", "Critic_score_review_ID"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

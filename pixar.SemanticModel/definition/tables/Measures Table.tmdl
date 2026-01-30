@@ -1,0 +1,589 @@
+table 'Measures Table'
+	lineageTag: 06985612-b320-4a99-85fb-55863ef0054e
+
+	measure 'Total Movies' =
+			
+			COUNT(
+			    pixar_films[number]
+			)
+		formatString: 0
+		lineageTag: 384d6656-5176-4055-8670-ee218c8cdffd
+
+	measure 'total Box_office' = ```
+			
+			    SUM(
+			        Box_Office_data[Box_Office_amount]
+			    )
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 72324863-ee76-45b0-8efd-5ac1230b1e17
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Profit %' = ```
+			
+			    DIVIDE(
+			        [Box_office_worldwide],
+			        [Budget],
+			        0
+			    )
+			```
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		lineageTag: fe3cb666-0959-4984-9d01-c89377ba5eb1
+
+	measure Budget = ```
+			
+			  CALCULATE(
+			    SUM(
+			        Box_Office_data[Box_Office_amount]
+			        ),
+			    FILTER(
+			        box_office, 
+			        box_office[box_office] = "Budget"
+			    )
+			  )
+			
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 5179fc12-d058-4500-84d9-8bc0b63e14d4
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure Box_office_worldwide = ```
+			
+			  CALCULATE(
+			    SUM(
+			        Box_Office_data[Box_Office_amount]
+			    ), 
+			    FILTER(
+			        box_office, 
+			        box_office[box_office] = "box_office_worldwide"
+			    )
+			  )
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: df7c2407-6140-4dcc-b8e9-9783f84b8005
+
+	measure box_office_us_canada =
+			
+			CALCULATE(
+			    SUM(
+			        Box_Office_data[Box_Office_amount]
+			    ),
+			    FILTER(
+			        box_office,
+			        box_office[box_office]  = "box_office_us_canada"
+			    )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 8eeb1a56-06e0-44b0-a9bf-f49f7401d2a1
+
+	measure box_office_other =
+			
+			CALCULATE(
+			    SUM(
+			        Box_Office_data[Box_Office_amount]
+			    ),
+			    FILTER(
+			        box_office,
+			        box_office[box_office]  = "box_office_other"
+			    )
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: d98022ef-6636-4f0e-b224-e6d2db292ac1
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Awards Won count' = ```
+			
+			CALCULATE(
+			    COUNT(
+			        academy_data[award_Id]
+			        ),
+			        FILTER(
+			            academy_award_status, 
+			            academy_award_status[status] = "Won" || academy_award_status[status] = "Won Special Achievement"
+			        )
+			)
+			```
+		formatString: 0
+		lineageTag: 43156dfe-129a-4a79-9670-5c0d4450c723
+
+	measure 'Won Special Achievement count' = ```
+			
+			CALCULATE(
+			    COUNT(
+			        academy_data[award_Id]
+			    ),
+			    FILTER(
+			        academy_award_status, 
+			        academy_award_status[status] = "Won Special Achievement"
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: 6790ccb1-7877-4173-94de-6506d23e5c9f
+
+	measure 'Award Nominated count' = ```
+			
+			VAR nominated =
+			CALCULATE(
+			    COUNT(
+			        academy_data[award_Id] 
+			    ),
+			    FILTER(
+			        academy_award_status,
+			        academy_award_status[status] = "Nominated"
+			    )
+			)
+			
+			RETURN nominated + [Total Awards Won count]
+			```
+		formatString: 0
+		lineageTag: c69506b5-fa44-4088-904d-5d0838fb8dab
+
+	measure 'Count movies by Genre' = ```
+			
+			COUNT(
+			    genres_data[film_number]
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 3c4208c0-b0d0-495a-9980-3e83237ac712
+
+	measure 'count the movies by person' = ```
+			
+			    count(
+			        pixar_people[role_id]
+			    )
+			    
+			
+			```
+		formatString: 0
+		lineageTag: 1aa45247-3218-4818-858b-c948ba060949
+
+	measure 'Selected Film' = ```
+			
+			SELECTEDVALUE(    
+			    pixar_films[film],
+			    "All Pixar Films"
+			)
+			```
+		lineageTag: 5effc27a-4179-4949-bbec-be6bbb1477da
+
+	measure 'selected People' =
+			
+			SELECTEDVALUE(
+			    people_details[People_name],
+			    "All"
+			)
+		lineageTag: 25d9512a-01d4-4301-bdc3-3bc2d4f89597
+
+	measure 'Selected Film Plot' = ```
+			
+			SELECTEDVALUE(    
+			    pixar_films[plot],
+			    "None"
+			)
+			```
+		lineageTag: 2396fdaf-e13c-4544-bf5d-8311b5cff0a0
+
+	measure 'people details for film' =
+			
+			SELECTEDVALUE(
+			    people_details[People_name],
+			    "ALL"
+			)
+		lineageTag: 3dd0ef1b-4faf-426f-a9c4-70ef26004c27
+
+	measure 'Highest IMDB Count' =
+			
+			CALCULATE(
+			    MAX(
+			        public_response_data[Critic_score_review_Value]
+			    ),
+			    FILTER(
+			        public_response,
+			        public_response[Critic_score_review] = "imdb_counts"
+			    )
+			)
+		formatString: #,0
+		lineageTag: f4ac1878-b85d-48c2-af73-b19fcb2534e9
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Highest Metacritic score' = ```
+			
+			MAXX( 
+			    --"metacritic_score"
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "metacritic_score"
+			        ),
+			        public_response_data[Critic_score_review_Value]
+			)
+			
+			    
+			```
+		formatString: 0
+		lineageTag: 90807dd4-b0cf-4da9-9762-f4aa6591ba1f
+
+	measure 'Highest Rotten_Tomatoes score' = ```
+			
+			MAXX(
+			    -- Rotten_tomatoes_score
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "Rotten_tomatoes_score"
+			        ),
+			    public_response_data[Critic_score_review_Value]
+			)
+			
+			
+			```
+		formatString: 0
+		lineageTag: cc170aba-f2cc-439c-9ffd-3acbe240fc62
+
+	measure 'Highest Rotten_Tomatoes Count' = ```
+			
+			CALCULATE(
+			    MAX(
+			        public_response_data[Critic_score_review_Value]
+			    ),
+			    FILTER(
+			        public_response,
+			        public_response[Critic_score_review] = "rotten_tomatoes_counts"
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: f340ba5b-ffdd-4446-8521-a1fe260d4f8d
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Highest Metacritic count' =
+			
+			CALCULATE(
+			    MAX(
+			        public_response_data[Critic_score_review_Value]
+			    ),
+			    FILTER(
+			        public_response,
+			        public_response[Critic_score_review] = "metacritic_counts"
+			    )
+			)
+		formatString: #,0
+		lineageTag: 0dbc0945-4b50-4a19-a6b2-78e6d462b0de
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Highest IMDB score' =
+			
+			MAXX(
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) ="imdb_score"
+			    ),
+			    public_response_data[Critic_score_review_Value]
+			)
+		lineageTag: d6042f5a-fc36-410d-88d7-52acdda43448
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Count films by Genre Type' = ```
+			
+			CALCULATE(
+			    COUNT(genres_data[film_number]),
+			        RELATEDTABLE(pixar_films)
+			    
+			)
+			```
+		formatString: 0
+		lineageTag: ce606ddd-32be-449e-9ed8-091d343e41b3
+
+	measure 'Film Names (Award Won)' = ```
+			
+			CONCATENATEX( 
+			    FILTER(
+			        academy_data,
+			        (
+			            RELATED(academy_award_status[status])= "Won" || RELATED(academy_award_status[status] )= "Won Special Achievement")
+			        ),
+			    RELATED(pixar_films[film]),
+			    ", "
+			)
+			```
+		lineageTag: a761a3d7-c164-4156-8eb0-f564597f3ea2
+
+	measure 'Film Names (Nominated)' = ```
+			
+			CONCATENATEX( 
+			    FILTER(
+			        academy_data,
+			        (
+			            RELATED(academy_award_status[status])= "Nominated" 
+			        )
+			    ),
+			    RELATED(pixar_films[film]),
+			    ", "
+			)
+			
+			```
+		lineageTag: 3fcc6ed0-6761-4cc8-a7ee-eb51deefd371
+
+	measure 'Film Name(by People and their role)' = ```
+			
+			CONCATENATEX(
+			    pixar_people,
+			    RELATED(pixar_films[film]) & " (" & RELATED(role[role_type]) & ") ",
+			    ", ",
+			    RELATED(pixar_films[release_date]),
+			    ASC
+			        
+			)
+			```
+		lineageTag: 25e1e5ec-c7e0-4176-b4ee-c5dc71798a4d
+
+	measure 'Films Genre' = ```
+			
+			CONCATENATEX(
+			    FILTER(
+			       genres_data,
+			       RELATED(genres_type[Category Name]) = "Genre"
+			
+			    ),
+			    RELATED(genres_type[genre_type]),
+			    ","
+			)
+			    
+			```
+		lineageTag: 4b353b9a-9fbd-4c9a-b8ea-2d27c1195041
+
+	measure 'Films Sub-Genre' =
+			
+			CONCATENATEX(
+			    Filter(
+			        genres_data,
+			        RELATED(genres_type[Category Name]) = "Subgenre"
+			    ),
+			    RELATED(genres_type[genre_type]),
+			    ","
+			)
+		lineageTag: 85b51776-b896-4681-9a56-988d7dcfc9a9
+
+	measure 'People films and their role' =
+			
+			CONCATENATEX(
+			    pixar_people,
+			    RELATED(pixar_films[film]) & " (" & RELATED(role[role_type]) & ") ",
+			    ", "
+			)
+		lineageTag: b541e314-c472-4d21-8ae7-d0fd1adbefc8
+
+	measure PeopleRole = ```
+			
+			CONCATENATEX(
+			    pixar_people,
+			    RELATED(
+			        people_details[People_name]) & " (" & RELATED(role[role_type]) & ") ",
+			        " ,",
+			        RELATED(pixar_films[release_date]),
+			        ASC
+			    
+			)
+			```
+		lineageTag: 1b631fe3-0e1f-4cfe-b772-dec12907922e
+
+	measure 'Highest IMDB score (Film Name)' = ```
+			
+			Var Highest_IMDB_Score = 
+			MAXX(
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "imdb_score"
+			    ),
+			    public_response_data[Critic_score_review_Value]
+			)
+			
+			
+			
+			Var FilmNames= 
+			CONCATENATEX(
+			    FILTER(
+			        public_response_data,
+			        public_response_data[Critic_score_review_Value] = Highest_IMDB_Score 
+			    ),
+			    RELATED(pixar_films[film]) ,
+			    ", "
+			)
+			
+			RETURN FilmNames
+			```
+		lineageTag: 42f7f3d4-925c-4f96-9619-e082f2f1c2e4
+
+	measure 'Highest Metacritic score ( film Name)' = ```
+			
+			 Var HighestMetacriticScore =
+			MAXX( 
+			    --"metacritic_score"
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "metacritic_score"
+			        ),
+			        public_response_data[Critic_score_review_Value]
+			)
+			
+			VAR FilmName =
+			CONCATENATEX(
+			    FILTER(
+			        public_response_data,
+			        public_response_data[Critic_score_review_Value] = HighestMetacriticScore
+			    ),
+			    RELATED(pixar_films[film]),
+			    ", "
+			)
+			
+			RETURN FilmName
+			
+			```
+		lineageTag: 3d51363f-0b33-4866-8840-e5c018681a2a
+
+	measure 'Highest Rotten_Tomatoes score (Film Name )' = ```
+			
+			 VAR highestRottenTomatoesScore =
+			MAXX(
+			    -- Rotten_tomatoes_score
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "Rotten_tomatoes_score"
+			        ),
+			    public_response_data[Critic_score_review_Value]
+			)
+			
+			VAR FilmName = 
+			CONCATENATEX(
+			    FILTER(
+			        public_response_data,
+			        public_response_data[Critic_score_review_Value] = highestRottenTomatoesScore
+			    ),
+			    RELATED(pixar_films[film]),
+			    ", "
+			    )
+			
+			RETURN FilmName
+			```
+		lineageTag: bbf10919-481c-42d8-8a17-c63040300df6
+
+	measure 'Highest Cinema score count' =
+			
+			MAXX(
+			    public_response_data,
+			    public_response_data[cinema_score_value]
+			)
+		lineageTag: 5ee53afc-6772-4a4d-b5f4-a0b7a1445a73
+
+	measure 'Dynamic rating slicer selection (Y axis)' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "IMDB",[Highest IMDB score],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "Rotten Tomatoes",[Highest Rotten_Tomatoes score],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "MetaCritic",[Highest Metacritic score]
+			)
+		formatString: 0.00
+		lineageTag: 62766a0c-802f-4157-bafa-55e6ddc03fd3
+
+	measure 'Dynamic Review slicer selection ( Y axis)' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "IMDB", [Highest IMDB Count],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "Rotten Tomatoes",[Highest Rotten_Tomatoes Count],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "MetaCritic",[Highest Metacritic count],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "Cinema",[Highest Cinema score count]
+			)
+		formatString: #,0
+		lineageTag: da5472d7-13bb-4085-9f69-4394c45c156d
+
+	measure 'Dynamic tooltip' =
+			
+			IF(
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "Cinema",
+			    [Highest Cinema score count],
+			    "-"
+			)
+		lineageTag: 37ad1937-193c-47dc-96bc-bf1cb5192e1f
+
+	measure 'Average Rotten_Tomatoes score' = ```
+			
+			AVERAGEX(
+			    -- Rotten_tomatoes_score
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "Rotten_tomatoes_score"
+			        ),
+			    public_response_data[Critic_score_review_Value]
+			)
+			
+			
+			```
+		lineageTag: 47db4728-ee6e-4e2b-b591-18a5745e78c7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average IMDB score' =
+			
+			AVERAGEX(
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) ="imdb_score"
+			    ),
+			    public_response_data[Critic_score_review_Value]
+			)
+		lineageTag: d382693a-39db-4f32-a717-38b6ce9d2ddd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Metacritic score' = ```
+			
+			MAXX( 
+			    --"metacritic_score"
+			    FILTER(
+			        public_response_data,
+			        RELATED(public_response[Critic_score_review]) = "metacritic_score"
+			        ),
+			        public_response_data[Critic_score_review_Value]
+			)
+			
+			    
+			```
+		lineageTag: fd96c9b5-77df-4ebc-8d5d-cd6bbe469224
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Dynamic Average slicer selection ( Y axis)' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "IMDB", [Average IMDB score],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "Rotten Tomatoes",[Average Rotten_Tomatoes score],
+			    SELECTEDVALUE('Rating Slicer'[Value1]) = "MetaCritic",[Average Metacritic score]
+			)
+		lineageTag: 5690499b-9deb-4098-8bef-98606d941168
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Measures Table' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

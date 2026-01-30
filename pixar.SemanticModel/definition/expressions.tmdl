@@ -1,0 +1,14 @@
+expression 'box_office (2)' =
+		let
+		    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\box_office.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"budget", type text}, {"box_office_us_canada", Int64.Type}, {"box_office_other", Int64.Type}, {"box_office_worldwide", Int64.Type}})
+		in
+		    #"Changed Type"
+	lineageTag: 984aed8a-ba37-45d4-9105-d4d57d0938f2
+	queryGroup: 'Tables used to create fact table'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

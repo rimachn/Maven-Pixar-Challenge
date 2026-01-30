@@ -1,0 +1,47 @@
+table box_office
+	lineageTag: 0e30aa4e-5cc2-4a07-8e0f-9afe0c51f088
+
+	column box_office_Id
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: 3627b4db-326d-449c-abb2-8768506bcfbd
+		summarizeBy: none
+		sourceColumn: box_office_Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column box_office
+		dataType: string
+		lineageTag: 8764495c-ee16-4ce7-93e3-fdebb34148e0
+		summarizeBy: none
+		sourceColumn: box_office
+		sortByColumn: box_office_Id
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition box_office = m
+		mode: import
+		queryGroup: 'Dimsion tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\box_office.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"film", type text}, {"budget", type text}, {"box_office_us_canada", Int64.Type}, {"box_office_other", Int64.Type}, {"box_office_worldwide", Int64.Type}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"budget", "box_office_us_canada", "box_office_other", "box_office_worldwide"}),
+				    #"Unpivoted Columns" = Table.UnpivotOtherColumns(#"Removed Other Columns", {}, "Attribute", "Value"),
+				    #"Removed Columns" = Table.RemoveColumns(#"Unpivoted Columns",{"Value"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Columns"),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Duplicates",{{"Attribute", "box_office"}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Renamed Columns", "Index", 1, 1, Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "box_office"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Reordered Columns",{{"Index", "box_office_Id"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

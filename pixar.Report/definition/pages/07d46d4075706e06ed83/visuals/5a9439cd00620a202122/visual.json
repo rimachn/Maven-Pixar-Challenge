@@ -1,0 +1,331 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "5a9439cd00620a202122",
+  "position": {
+    "x": 11.743119266055047,
+    "y": 172.23241590214067,
+    "z": 0,
+    "height": 347.07441386340469,
+    "width": 370.56065239551481,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Pixar has produces 28 films for the last 3 decade. Their first film "
+                  },
+                  {
+                    "value": "The Toy Story ",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "was a huge success. It was produced with"
+                  },
+                  {
+                    "value": " $30M",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " and total revenue generated was"
+                  },
+                  {
+                    "value": " $394M",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " which makes it highest profit earning film till now that is 1,314.79%."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "2020 and 2022 was not so great year where movies made any profit and collected 80% and 66%  of the budget spent on the movies."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Andrew Stanton",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": " has been a major creative force at Pixar Animation Studios since 1995 and has played  different roles in Pixar's success. Pixar has received ",
+                    "textStyle": {
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "18 ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "awards out of this ",
+                    "textStyle": {
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "11 ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "was for ",
+                    "textStyle": {
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "Animated ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "Feature film and nominated for ",
+                    "textStyle": {
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "40 ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  },
+                  {
+                    "value": "times.",
+                    "textStyle": {
+                      "color": "rgba(0, 0, 0, 0.87)"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Pixar has a history of releasing its movies in "
+                  },
+                  {
+                    "value": "June ",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "and mostly on"
+                  },
+                  {
+                    "value": " Fridays",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ", especially during the summer blockbuster season. This strategy helps them capitalize on school vacations, maximizing audience turnout."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Overview'"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'''Segoe UI Bold'', wf_segoe-ui_bold, helvetica, arial, sans-serif'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "italic": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            },
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 4,
+                      "Percent": 0.6
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "divider": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Inner'"
+                }
+              }
+            },
+            "preset": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "angle": {
+              "expr": {
+                "Literal": {
+                  "Value": "0L"
+                }
+              }
+            },
+            "shadowDistance": {
+              "expr": {
+                "Literal": {
+                  "Value": "0L"
+                }
+              }
+            },
+            "shadowBlur": {
+              "expr": {
+                "Literal": {
+                  "Value": "20L"
+                }
+              }
+            },
+            "shadowSpread": {
+              "expr": {
+                "Literal": {
+                  "Value": "0L"
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "70L"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": -0.1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "ac6985e014ccdae1a4a5"
+}

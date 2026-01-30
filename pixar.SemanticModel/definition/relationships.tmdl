@@ -1,0 +1,58 @@
+relationship AutoDetected_152bb2a7-cf52-4b20-8dda-5579be85b0a0
+	fromColumn: Box_Office_data.number
+	toColumn: pixar_films.number
+
+relationship AutoDetected_e0902bfe-7ce7-4764-955a-f7f4bec92878
+	fromColumn: Box_Office_data.box_office_Id
+	toColumn: box_office.box_office_Id
+
+relationship 08d4e181-8848-62c0-d1ba-140d225c5483
+	fromColumn: public_response_data.film_number
+	toColumn: pixar_films.number
+
+relationship 0224da90-ee6d-ca51-03e0-fc99f1ca8c6c
+	fromColumn: genres_data.film_number
+	toColumn: pixar_films.number
+
+relationship aba84c19-31f0-4af4-25b2-56efafdda066
+	fromColumn: public_response_data.Critic_score_review_ID
+	toColumn: public_response.Critic_score_review_ID
+
+relationship a6cbb3c6-36ad-6ace-8b2c-f0d15d5ea62b
+	fromColumn: genres_type.Category_Id
+	toColumn: genres_category.Category_Id
+
+relationship f27af5c7-ca66-5770-d7cf-7c8f63f2c594
+	fromColumn: genres_data.genre_type_id
+	toColumn: genres_type.genre_type_id
+
+relationship dc7a3dc4-4126-3217-c39e-b7209fb64d8f
+	fromColumn: academy_data.award_Id
+	toColumn: academy_awards.award_Id
+
+relationship f5158ba0-33a2-d91d-6ceb-5694b5cc65ce
+	fromColumn: academy_data.award_status_id
+	toColumn: academy_award_status.award_status_id
+
+relationship eaa5367f-85bf-26b3-44b1-cd0a5ba3d5b9
+	fromColumn: academy_data.film_number
+	toColumn: pixar_films.number
+
+relationship d70a747b-3508-fc44-6c28-cc16f1ab8cac
+	fromColumn: pixar_people.role_id
+	toColumn: role.role_id
+
+relationship 79efed66-4aab-1878-c84b-85c6259d1eb1
+	fromColumn: pixar_people.People_id
+	toColumn: people_details.People_id
+
+relationship 95b916ed-4492-001c-bda6-d900243ca16b
+	fromColumn: pixar_people.film_number
+	toColumn: pixar_films.number
+
+relationship 17ab8fd5-3ce2-83b3-2f52-f23666056f39
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: Calendar.release_date
+	toColumn: pixar_films.release_date
+

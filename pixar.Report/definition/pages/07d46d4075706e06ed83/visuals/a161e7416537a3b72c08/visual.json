@@ -1,0 +1,35 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "a161e7416537a3b72c08",
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 1000,
+    "height": 62.364461428230236,
+    "width": 73.369954621447334,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "image",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "imageUrl": {
+              "expr": {
+                "ResourcePackageItem": {
+                  "PackageName": "RegisteredResources",
+                  "PackageType": 1,
+                  "ItemName": "Lamp9049300328104599.png"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "parentGroupName": "c2fcfb60be07cadc4197",
+  "howCreated": "InsertVisualButton"
+}

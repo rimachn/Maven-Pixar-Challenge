@@ -1,0 +1,64 @@
+table Box_Office_data
+	lineageTag: ca051730-8e83-4633-a40a-5488bf0e4daf
+
+	column number
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2e6f132e-93bb-43ef-aa21-1d99de958f63
+		summarizeBy: none
+		sourceColumn: number
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column box_office_Id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ce3827e3-03ce-45bd-a624-2af799379857
+		summarizeBy: none
+		sourceColumn: box_office_Id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Box_Office_amount
+		dataType: int64
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 3ebb2603-2406-4440-854a-557b95043682
+		summarizeBy: sum
+		sourceColumn: Box_Office_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Box_Office_data = m
+		mode: import
+		queryGroup: 'Fact tables'
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\rimac\OneDrive\Desktop\Maven Analytics - Power BI\5. Maven Pixar Challenge\Pixar+Films\pixar_films.csv"),[Delimiter=",", Columns=6, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"number", Int64.Type}, {"film", type text}, {"release_date", type date}, {"run_time", Int64.Type}, {"film_rating", type text}, {"plot", type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"number", "film"}),
+				    #"Merged Queries" = Table.NestedJoin(#"Removed Other Columns", {"film"}, #"box_office (2)", {"film"}, "box_office (2)", JoinKind.LeftOuter),
+				    #"Expanded box_office (2)" = Table.ExpandTableColumn(#"Merged Queries", "box_office (2)", {"budget", "box_office_us_canada", "box_office_other", "box_office_worldwide"}, {"box_office (2).budget", "box_office (2).box_office_us_canada", "box_office (2).box_office_other", "box_office (2).box_office_worldwide"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Expanded box_office (2)",{{"box_office (2).budget", "budget"}, {"box_office (2).box_office_us_canada", "box_office_us_canada"}, {"box_office (2).box_office_other", "box_office_other"}, {"box_office (2).box_office_worldwide", "box_office_worldwide"}}),
+				    #"Unpivoted Other Columns" = Table.UnpivotOtherColumns(#"Renamed Columns", {"number", "film"}, "Attribute", "Value"),
+				    #"Replaced Value" = Table.ReplaceValue(#"Unpivoted Other Columns","NA",0,Replacer.ReplaceValue,{"Value"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Replaced Value",{{"Value", Int64.Type}}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Changed Type1", {"Attribute"}, box_office, {"box_office"}, "box_office", JoinKind.LeftOuter),
+				    #"Expanded box_office" = Table.ExpandTableColumn(#"Merged Queries1", "box_office", {"box_office_Id"}, {"box_office_Id"}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Expanded box_office",{"number", "film", "box_office_Id", "Attribute", "Value"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Reordered Columns",{"Attribute"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns",{{"Value", "Box_Office_amount"}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns1",{"film"})
+				in
+				    #"Removed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
