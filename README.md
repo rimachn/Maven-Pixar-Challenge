@@ -48,4 +48,4 @@ Power BI Desktop,Power BI Service,  Power Query ,  DAX
 - Screenshots/ (dashboard visuals)
 
 **Notes:**  
-This project was completed independently as part of self-learning in Power BI and data analysis. The dashboards demonstrate data cleaning, modeling, and visualization skills applicable to public transportation and urban analytics studies.
+This project was completed independently as part of hands-on learning in data analytics and visualization. It demonstrates the use of data to uncover performance trends and industry insights in the film and entertainment sector.
